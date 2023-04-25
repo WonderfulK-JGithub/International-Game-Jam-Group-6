@@ -19,10 +19,18 @@ public class S_Movement : MonoBehaviour
     [SerializeField]
     float Trampoline;
 
+    [SerializeField]
+    AudioClip slurp;
+
     [Header("Meow")]
     [SerializeField]
     AudioClip[] meowClip;
     AudioSource meowSource;
+
+    [SerializeField]
+    AudioClip walking;
+    [SerializeField]
+    AudioSource meowWalk;
 
     [Header("Ledge")]
     [SerializeField]
@@ -37,13 +45,15 @@ public class S_Movement : MonoBehaviour
 
     float nearestDistance;
 
+    [SerializeField]
+    GameObject indicator;
+
     // Start is called before the first frame update
     void Start()
     {
         body = GetComponent<Rigidbody>();
         meowSource = GetComponent<AudioSource>();
         jumping = false;
-
         ledges = GameObject.FindGameObjectsWithTag("Ledge");
     }
 
@@ -54,30 +64,13 @@ public class S_Movement : MonoBehaviour
         Meow();
     }
 
-    void GetClosest()
-    {
-        foreach (GameObject ledge in ledges)
-        {
-            if (Vector3.Distance(transform.position, ledge.transform.position) < nearestDistance)
-            {
-                nearestDistance = Vector3.Distance(transform.position, ledge.transform.position);
-                target = ledge.transform;
-            }
-        }
-       /* foreach (GameObject ledge in ledges)
-            if (ledge.transform != target.transform)
-                ledge.transform.GetChild(0).gameObject.SetActive(false);
-            else
-                ledge.transform.GetChild(0).gameObject.SetActive(true);
-       */
-    }
+    
     public void LedgeJumping()
     {
-
-        GetClosest();
-
         if (target != null /*&& Vector3.Distance(target.position, transform.position) < 8 && Vector3.Distance(target.position, transform.position) > 4*/)
         {
+
+            transform.rotation = Quaternion.LookRotation(target.position - transform.position);
             //transform.position = Vector3.MoveTowards(transform.position, target.position, 1 * Time.deltaTime);
             jumping = true;
 
@@ -119,13 +112,50 @@ public class S_Movement : MonoBehaviour
             
         }
     }
+
+    void GetClosest()
+    {
+
+        foreach (GameObject ledge in ledges)
+        {
+            if (Vector3.Distance(transform.position, ledge.transform.position) < nearestDistance)
+            {
+                nearestDistance = Vector3.Distance(transform.position, ledge.transform.position);
+                target = ledge.transform;
+            }
+        }
+
+
+    }
+
     public void Movement()
     {
+        GetClosest();
+        if (target != null)
+        {
+            if (Vector3.Distance(transform.position, target.position) < 12 && Vector3.Distance(transform.position, target.position) > 7)
+                indicator.transform.position = target.position + new Vector3(0, 1, 0);
+            else
+                indicator.transform.position = Vector3.zero;
+
+            indicator.transform.LookAt(Camera.main.transform.position);
+
+        }
+
         bool isgrounded = Physics.CheckSphere(sphere.position, 0.4f, jumpLayer);
+
         if (!jumping)
         {
+            if (body.velocity.magnitude > 1f && isgrounded)
+                if (!meowWalk.isPlaying)
+                {
+                    meowWalk.pitch = (Random.Range(0.6f, 0.9f));
+                    meowWalk.PlayOneShot(walking, Random.Range(0.05f, 0.15f));
+                }
+
+            nearestDistance = float.MaxValue;
             //Movement
-           
+
             float movementForward = Input.GetAxis("Vertical");
             float movementSides = Input.GetAxis("Horizontal");
 
@@ -145,9 +175,8 @@ public class S_Movement : MonoBehaviour
         if (isgrounded)
         {
             jumping = false;
-            if (Input.GetButton("Jump") && Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetButton("Jump") && Input.GetKey(KeyCode.LeftShift) && Vector3.Distance(transform.position, target.position) < 13 && Vector3.Distance(transform.position, target.position) > 7)
             {
-                nearestDistance = float.MaxValue;
                 LedgeJumping();
             }
             if (Input.GetButton("Jump"))
@@ -166,12 +195,14 @@ public class S_Movement : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Ledge")
+        if(other.transform.tag == "Milk")
         {
-            jumping = false;
-
+            other.GetComponent<Animator>().SetBool("poof", true);
+            meowWalk.PlayOneShot(slurp, 0.5f);
+            S_GameManager.score += 1;
+            
         }
     }
 }

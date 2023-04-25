@@ -7,6 +7,8 @@ public class PickUpItem : MonoBehaviour
     Transform MouthPos;
     Rigidbody RB;
     bool PickedUp;
+    [SerializeField]
+    Transform indicator;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,16 +19,23 @@ public class PickUpItem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Vector3.Distance(transform.position, MouthPos.position) < 2 && Input.GetKeyDown(KeyCode.E) && PickedUp == false)
+        indicator.transform.LookAt(Camera.main.transform.position);
+
+        if (Vector3.Distance(transform.position, MouthPos.position) < 2 && PickedUp == false)
         {
-            
-            PickedUp = true;
-        } 
+            indicator.gameObject.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                PickedUp = true;
+            }
+        }
         else if (Input.GetKeyDown(KeyCode.E) && PickedUp == true)
         {
+            indicator.gameObject.SetActive(false);
             PickedUp = false;
         }
-
+        else
+            indicator.gameObject.SetActive(false);
         PickUp();
     }
 
