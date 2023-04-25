@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class S_Movement : MonoBehaviour
 {
+    //ROBIN ZEITLIN TALAMO MADE THIS SCRIPT AND EVERYTHING WITHIN, PASS IT ON AND DEATH I SHALT BRING
+
+
+
     [Header("Player/Stats")]
     Rigidbody body;
     [SerializeField]
@@ -146,8 +150,7 @@ public class S_Movement : MonoBehaviour
 
         if (!jumping)
         {
-            if (body.velocity.magnitude > 1f && isgrounded)
-                if (!meowWalk.isPlaying)
+                if (!meowWalk.isPlaying && isgrounded && body.velocity.magnitude > 1f)
                 {
                     meowWalk.pitch = (Random.Range(0.6f, 0.9f));
                     meowWalk.PlayOneShot(walking, Random.Range(0.05f, 0.15f));
@@ -181,7 +184,7 @@ public class S_Movement : MonoBehaviour
             }
             if (Input.GetButton("Jump"))
             {
-                body.AddForce(0, normalJumpHeight, 0);
+                body.AddForce(0, normalJumpHeight * Time.deltaTime, 0);
             }
         }
     }

@@ -9,10 +9,16 @@ public class PickUpItem : MonoBehaviour
     bool PickedUp;
     [SerializeField]
     Transform indicator;
+
+    [SerializeField]
+    AudioClip nom;
+    AudioSource nomsource;
+
     // Start is called before the first frame update
     void Start()
     {
         MouthPos = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        nomsource = GetComponent<AudioSource>();
         RB = GetComponent<Rigidbody>();
     }
 
@@ -27,6 +33,7 @@ public class PickUpItem : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 PickedUp = true;
+                nomsource.PlayOneShot(nom, 0.2f);
             }
         }
         else if (Input.GetKeyDown(KeyCode.E) && PickedUp == true)
