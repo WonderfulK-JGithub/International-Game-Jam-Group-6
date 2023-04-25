@@ -19,6 +19,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float smoothTime;
     [SerializeField] bool hideMouse;
     [SerializeField] LayerMask avoidLayers;
+    [SerializeField] float smallOffset;
 
     private void Awake()
     {
@@ -49,7 +50,7 @@ public class CameraController : MonoBehaviour
 
         if (Physics.Raycast(target.position,-transform.forward,out RaycastHit _hit,distanceFromTarget,avoidLayers))
         {
-            _cameraPos = _hit.point;
+            _cameraPos = _hit.point + transform.forward * smallOffset;
         }
 
         transform.position = _cameraPos;
