@@ -47,7 +47,7 @@ public class CameraController : MonoBehaviour
 
         Vector3 _cameraPos = target.position - transform.forward * distanceFromTarget;
 
-        if (Physics.Raycast(target.position,-transform.forward,out RaycastHit _hit,avoidLayers))
+        if (Physics.Raycast(target.position,-transform.forward,out RaycastHit _hit,distanceFromTarget,avoidLayers))
         {
             _cameraPos = _hit.point;
         }
