@@ -34,7 +34,7 @@ public class CameraController : MonoBehaviour
         rotationX += mouseX * mouseSence;
         rotationY += mouseY * -mouseSence;
 
-        rotationY = Mathf.Clamp(rotationY, -80, 80f);
+        rotationY = Mathf.Clamp(rotationY, 0, 80f);
 
         Vector3 nextRotation = new Vector3(rotationX, rotationY);
 

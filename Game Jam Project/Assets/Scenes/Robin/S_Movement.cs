@@ -154,6 +154,10 @@ public class S_Movement : MonoBehaviour
                 nearestDistance = float.MaxValue;
                 LedgeJumping();
             }
+            if (Input.GetButton("Jump"))
+            {
+                body.AddForce(0, 20, 0);
+            }
         }
     }
 
