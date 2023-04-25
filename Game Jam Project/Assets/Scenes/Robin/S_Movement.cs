@@ -12,9 +12,7 @@ public class S_Movement : MonoBehaviour
     LayerMask jumpLayer;
 
     public float speed;
-    public float runningspeed;
     public float currentspeed;
-    float currentJumpHeight;
     public float normalJumpHeight;
 
     [Header("InteractAbles")]
@@ -54,8 +52,6 @@ public class S_Movement : MonoBehaviour
     {
         Movement();
         Meow();
-
-       
     }
 
     void GetClosest()
@@ -156,7 +152,7 @@ public class S_Movement : MonoBehaviour
             }
             if (Input.GetButton("Jump"))
             {
-                body.AddForce(0, 20, 0);
+                body.AddForce(0, normalJumpHeight, 0);
             }
         }
     }
