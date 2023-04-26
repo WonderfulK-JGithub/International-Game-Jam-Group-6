@@ -12,6 +12,7 @@ Shader "Unlit/CellShader"
 		[HDR]
 		_RimColor("Rim Color", Color) = (1,1,1,1)
 		_RimAmount("Rim Amount", Range(0, 1)) = 0.716
+		_RimThreshold("Rim Threshold", Range(0, 1)) = 0.1
 	}
 		SubShader
 	{
@@ -26,9 +27,11 @@ Shader "Unlit/CellShader"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma multi_compile_fwdbase
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
+			#include "AutoLight.cginc"
 
 			struct appdata
 			{
@@ -44,6 +47,9 @@ Shader "Unlit/CellShader"
 				float2 uv : TEXCOORD0;
 				float3 viewDir : TEXCOORD1;
 				float3 worldNormal : NORMAL;
+
+				SHADOW_COORDS(2)
+
 			};
 
 			sampler2D _MainTex;
@@ -58,6 +64,8 @@ Shader "Unlit/CellShader"
 
 				o.viewDir = WorldSpaceViewDir(v.vertex);
 
+				TRANSFER_SHADOW(o)
+
 				return o;
 			};
 
@@ -71,12 +79,16 @@ Shader "Unlit/CellShader"
 			float4 _RimColor;
 			float _RimAmount;
 
+			float _RimThreshold;
+
 			float4 frag(v2f i) : SV_Target
 			{
 				float3 normal = normalize(i.worldNormal);
 				float NdotL = dot(_WorldSpaceLightPos0, normal);
 
-				float lightIntensity = smoothstep(0, 0.01, NdotL);
+				float shadow = SHADOW_ATTENUATION(i);
+
+				float lightIntensity = smoothstep(0, 0.01, NdotL * shadow);
 
 				float4 light = lightIntensity * _LightColor0;
 
@@ -93,8 +105,9 @@ Shader "Unlit/CellShader"
 
 				float4 rimDot = 1 - dot(viewDir, normal);
 
+				float rimIntensity = rimDot * pow(NdotL, _RimThreshold);
 
-				float rimIntensity = smoothstep(_RimAmount - 0.01, _RimAmount + 0.01, rimDot);
+				rimIntensity = smoothstep(_RimAmount - 0.01, _RimAmount + 0.01, rimIntensity);
 				float4 rim = rimIntensity * _RimColor;
 
 
@@ -106,5 +119,6 @@ Shader "Unlit/CellShader"
 			}
 			ENDCG
 		}
+	UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 	}
 }
