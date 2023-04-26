@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController current;
+
     [SerializeField] float mouseSence = 3f;
 
     float rotationX;
@@ -23,6 +25,7 @@ public class CameraController : MonoBehaviour
 
     private void Awake()
     {
+        current = this;
         if (hideMouse) Cursor.lockState = CursorLockMode.Locked; 
     }
 

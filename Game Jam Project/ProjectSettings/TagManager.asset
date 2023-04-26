@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ledge
   - Milk
+  - Player2
   layers:
   - Default
   - TransparentFX
