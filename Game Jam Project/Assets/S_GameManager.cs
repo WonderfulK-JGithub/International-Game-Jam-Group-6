@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class S_GameManager : MonoBehaviour
+public class S_GameManager : MonoBehaviour //ROBIN
 {
     public static int score;
 
