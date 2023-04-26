@@ -52,6 +52,8 @@ public class S_Movement : MonoBehaviour
     [SerializeField]
     GameObject indicator;
 
+    [SerializeField] Animator anim;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,6 +61,7 @@ public class S_Movement : MonoBehaviour
         meowSource = GetComponent<AudioSource>();
         jumping = false;
         ledges = GameObject.FindGameObjectsWithTag("Ledge");
+        
     }
 
     // Update is called once per frame
@@ -167,24 +170,34 @@ public class S_Movement : MonoBehaviour
 
             body.velocity = rightMove + forwardMove + new Vector3(0, body.velocity.y, 0);
 
+            
+
             //Rotation
             var dir = new Vector3(body.velocity.x, 0, body.velocity.z);
+
+            anim.SetBool("IsWalking", dir.magnitude != 0);
+
             if (dir.magnitude > 0.3)
                 transform.rotation = Quaternion.LookRotation(dir);
 
 
             
         }
+
+        anim.SetBool("OnGround", isgrounded);
+
         if (isgrounded)
         {
             jumping = false;
             if (Input.GetButton("Jump") && Input.GetKey(KeyCode.LeftShift) && Vector3.Distance(transform.position, target.position) < 13 && Vector3.Distance(transform.position, target.position) > 7)
             {
                 LedgeJumping();
+                anim.Play("Jump2");
             }
             if (Input.GetButton("Jump"))
             {
                 body.AddForce(0, normalJumpHeight * Time.deltaTime, 0);
+                anim.Play("Jump2");
             }
         }
     }

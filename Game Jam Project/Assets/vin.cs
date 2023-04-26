@@ -8,15 +8,19 @@ public class vin : MonoBehaviour
     [SerializeField] GameObject cat2;
     [SerializeField] GameObject winCamera;
     [SerializeField] GameObject plejer;
+    [SerializeField] GameObject ket;
 
     [SerializeField] Animator anim;
     private void OnTriggerEnter(Collider other)
     {
+        if (!other.CompareTag("Player2")) return;
+
         GetComponent<CapsuleCollider>().enabled = false;
 
         cat.SetActive(true);
         cat2.SetActive(true);
         anim.Play("Win_puss");
+        ket.SetActive(false);
 
         plejer.SetActive(false);
 
