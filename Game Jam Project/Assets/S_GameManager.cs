@@ -17,6 +17,7 @@ public class S_GameManager : MonoBehaviour
     {
         bottles = GameObject.FindGameObjectsWithTag("Milk");
         maxScore = bottles.Length;
+        score = 0;
     }
 
     private void Update()
